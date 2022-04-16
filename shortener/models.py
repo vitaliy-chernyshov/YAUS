@@ -1,5 +1,8 @@
 from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from django.db import models
+
+from shortener.utils import gen_random_string
 
 User = get_user_model()
 
@@ -17,6 +20,12 @@ class LongShortUrl(models.Model):
         verbose_name='Сокращенная ссылка',
         help_text='Опционально',
         unique=True,
+        blank=True,
+        validators=(RegexValidator(
+            r'^[a-zA-Z0-9]+$',
+            'Короткая ссылка должна содержать только'
+            'буквы латинского алфавита и/или цифры'),),
+        error_messages={'unique': 'Такая короткая ссылка уже существует'}
     )
     added_date = models.DateTimeField(
         verbose_name='Дата добавления',
@@ -29,7 +38,8 @@ class LongShortUrl(models.Model):
         User,
         on_delete=models.CASCADE,
         verbose_name='Автор ссылки',
-        related_name='urls'
+        related_name='urls',
+        default=User.get_anonymous_pk(),
     )
 
     class Meta:
@@ -39,3 +49,10 @@ class LongShortUrl(models.Model):
     def __str__(self):
         return f'{self.long[:10]} - {self.short}'
 
+    def save(self, *args, **kwargs):
+        if not self.short:
+            # Generate ID once, then check the db. If exists, keep trying.
+            self.short = gen_random_string()
+            while LongShortUrl.objects.filter(short=self.short).exists():
+                self.short = gen_random_string()
+        super().save(*args, **kwargs)

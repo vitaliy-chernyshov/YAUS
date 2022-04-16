@@ -5,7 +5,7 @@ from django.db import models
 class User(AbstractUser):
     email = models.EmailField('Email', unique=True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ('username',)
 
     class Meta:
         ordering = ('username',)
@@ -16,3 +16,8 @@ class User(AbstractUser):
         if self.username:
             return self.username
         return self.email
+
+    @classmethod
+    def get_anonymous_pk(cls):
+        obj, _ = cls.objects.get_or_create(username='Аноним')
+        return obj.pk
