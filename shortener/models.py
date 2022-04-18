@@ -16,16 +16,19 @@ class LongShortUrl(models.Model):
         help_text='Введите оригинальную ссылку'
     )
     short = models.CharField(
-        max_length=1024,
+        max_length=16,
         verbose_name='Сокращенная ссылка',
         help_text='Опционально',
         unique=True,
         blank=True,
         validators=(RegexValidator(
             r'^[a-zA-Z0-9]+$',
-            'Короткая ссылка должна содержать только'
+            'Короткая ссылка должна содержать только '
             'буквы латинского алфавита и/или цифры'),),
-        error_messages={'unique': 'Такая короткая ссылка уже существует'}
+        error_messages={
+            'unique': 'Такая короткая ссылка уже существует',
+            'max_length': 'Максимальная длина короткой ссылки 16 символов'
+        }
     )
     added_date = models.DateTimeField(
         verbose_name='Дата добавления',

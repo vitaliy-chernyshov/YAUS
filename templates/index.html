@@ -1,12 +1,36 @@
 {% extends 'base.html' %}
 {% load user_filters %}
 {% block content %}
-  <div class="card">
-    <div class="card-header">
-      <form action="{% url 'shortener:index' %}" method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-primary">Сгенерировать</button>
-      </form>
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header"> Заголовок</div>
+        <div class="card-body">
+          {% include 'includes/error_control.html' %}
+
+          <form action="{% url 'shortener:index' %}" method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+              {% include 'includes/single_form.html' %}
+            {% endfor %}
+            <button type="submit" class="btn btn-primary">Сгенерировать</button>
+          </form>
+        </div>
+      </div>
+      {% if messages %}
+        {% for message in messages %}
+          <div class="col alert mt-3 {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.WARNING %} {{ message }}
+            {% else %}
+              <p class="text-center">
+                Ваша ссылка готова:
+                <a href="{{ request.build_absolute_uri }}{{ message }}">
+                  {{ request.build_absolute_uri }}{{ message }}</a>
+              </p>
+              </div>
+            {% endif %}
+        {% endfor %}
+      {% endif %}
     </div>
   </div>
 {% endblock %}
