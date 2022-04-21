@@ -133,3 +133,4 @@ if DEBUG:
     DEBUG_TOOLBAR_CONFIG = {
         'INTERCEPT_REDIRECTS': False,
     }
+LOGOUT_REDIRECT_URL = 'shortener:index'
