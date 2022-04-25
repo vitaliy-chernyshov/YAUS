@@ -16,9 +16,15 @@ class IndexView(SuccessMessageMixin, CreateView):
     success_url = reverse_lazy('shortener:index')
     success_message = '%(short_url)s'
 
+    def form_valid(self, form):
+        """Сохраняет автора для ссылки если пользователь авторизован"""
+        if self.request.user.is_authenticated:
+            form.instance.author = self.request.user
+        return super().form_valid(form)
+
     def get_success_message(self, cleaned_data):
         return self.success_message % dict(
-            short_url=self.object.short,)
+            short_url=f'{self.object.short}',)
 
 
 class CustomRedirectView(RedirectView):
