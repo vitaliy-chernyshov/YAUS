@@ -134,3 +134,4 @@ if DEBUG:
         'INTERCEPT_REDIRECTS': False,
     }
 LOGOUT_REDIRECT_URL = 'shortener:index'
+LOGIN_REDIRECT_URL = 'shortener:index'

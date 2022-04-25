@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Войти{% endblock %}
+{% block content %}
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-header"> Войти на сайт</div>
+        <div class="card-body">
+          {% include 'includes/error_control.html' %}
+          {% if next %}
+            <div class="alert alert-info" role="alert">
+              Вы обратились к странице, доступ к которой возможен только для залогиненных
+              пользователей.<br>
+              Пожалуйста, авторизуйтесь.
+            </div>
+          {% else %}
+            <div class="alert alert-info" role="alert">
+              Пожалуйста, авторизуйтесь.
+            </div>
+          {% endif %}
+          <form method="post" action={% url 'users:login' %}>
+            {% csrf_token %}
+            {% for field in form %}
+              {% include 'includes/single_form.html' %}
+            {% endfor %}
+            <div class="col-md-6 offset-md-4">
+              <button type="submit" class="btn btn-primary">
+                Войти
+              </button>
+              {#      <a href="{% url 'users:password_reset_form' %}" class="btn btn-link">#}
+              {#        Забыли пароль?#}
+              {#      </a>#}
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
