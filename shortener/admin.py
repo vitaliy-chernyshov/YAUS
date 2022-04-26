@@ -10,9 +10,10 @@ admin.site.unregister(Group)
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
-    list_display = ('username', 'email', 'first_name', 'posts_count')
+    list_display = ('username', 'email', 'first_name', 'urls_count')
 
-    def posts_count(self, obj):
+    @admin.display(description='Кол-во ссылок у юзера')
+    def urls_count(self, obj):
         return obj.urls.count()
 
 
@@ -24,4 +25,3 @@ class URLAdmin(admin.ModelAdmin):
     search_fields = ('long',)
     list_filter = ('added_date', 'author', 'is_public')
     empty_value_display = '-пусто-'
-
