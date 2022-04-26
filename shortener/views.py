@@ -1,9 +1,9 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import HttpResponse, HttpRequest
-from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, RedirectView
+from django.views.generic.list import MultipleObjectMixin
 
 from shortener.models import LongShortUrl
 
@@ -36,3 +36,15 @@ class CustomRedirectView(RedirectView):
             return url.long
         messages.warning(self.request, 'Такой ссылки нет в базе данных')
         return reverse('shortener:index')
+
+
+class ProfileView(MultipleObjectMixin, LoginRequiredMixin, CreateView):
+    http_method_names = ('get', 'post')
+    paginate_by = 5
+    model = LongShortUrl
+    fields = ('long', 'short', 'is_public',)
+    template_name = 'profile.html'
+
+    def get_context_data(self, **kwargs):
+        author_urls = LongShortUrl.objects.filter(author=self.request.user.id)
+        return super().get_context_data(object_list=author_urls, **kwargs)

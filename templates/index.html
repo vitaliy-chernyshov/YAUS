@@ -25,10 +25,11 @@
               <p class="text-center">
                 Ваша ссылка готова:
                 <a href="{{ request.build_absolute_uri }}{{ message }}">
-                  {{ request.build_absolute_uri }}{{ message }}</a>
+                  {{ request.build_absolute_uri }}{{ message }}
+                </a>
               </p>
-              </div>
             {% endif %}
+          </div>
         {% endfor %}
       {% endif %}
     </div>
