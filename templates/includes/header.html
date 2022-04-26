@@ -6,8 +6,10 @@
         <li class="nav-item">
           <a class="nav-link" href="{% url 'users:logout' %}">Выйти</a>
         </li>
-        <li class="nav-item navbar-text">
-          Пользователь: {{ user.username }}
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'shortener:profile' %}">
+            Пользователь: {{ user.username }}
+          </a>
         </li>
       {% else %}
         <li class="nav-item">
