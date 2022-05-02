@@ -22,18 +22,30 @@
               <td><input type="text" readonly class="form-control-plaintext" name="long" value="{{ url.long }}"></td>
               <td><input type="text" readonly class="form-control-plaintext" name="short" value="{{ url.short }}"></td>
               <td>
-                <input class="form-check-input" type="checkbox" name="is_public"
-                    {% if  url.is_public == True %}
-                       checked
-                    {% endif %}
-                onchange="send_post_data({{ url.pk }})"
-                >
+                <div class="form-check form-switch">
+                  <input class="form-check-input" type="checkbox" name="is_public"
+                      {% if  url.is_public == True %}
+                         checked
+                      {% endif %}
+                         onchange="send_post_data({{ url.pk }})"
+                  >
+                </div>
+              </td>
+              <td>
+                <input class="btn btn-danger btn-sm" type="submit" name="confirm_delete" value="Удалить">
               </td>
             </tr>
           </form>
         {% endfor %}
         </tbody>
       </table>
+     {% if messages %}
+        {% for message in messages %}
+          <div class="col alert mt-3 {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+             {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
       {% include 'paginator.html' %}
     </div>
   </div>

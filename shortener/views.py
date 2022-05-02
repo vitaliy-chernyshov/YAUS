@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import CreateView, RedirectView, UpdateView
 from django.views.generic.list import ListView
@@ -54,7 +55,17 @@ class ProfileView(LoginRequiredMixin, ListView):
         return author.urls.all()
 
 
-class UpdateURL(LoginRequiredMixin, UpdateView):
+class UpdateURL(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     form_class = URLForm
     model = LongShortUrl
     success_url = reverse_lazy('shortener:profile')
+
+    def post(self, request, *args, **kwargs):
+        print(args, kwargs)
+        if 'confirm_delete' in self.request.POST:
+            url = get_object_or_404(LongShortUrl, pk=kwargs.get('pk'))
+            url.delete()
+            messages.warning(request, 'ссылка удалена')
+
+            return redirect(self.success_url)
+        return super(UpdateURL, self).post(request, *args, **kwargs)
