@@ -1,6 +1,6 @@
 from django import forms
 
-from .models import LongShortUrl
+from shortener.models import LongShortUrl
 
 
 class URLForm(forms.ModelForm):

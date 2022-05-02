@@ -2,9 +2,10 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse, reverse_lazy
-from django.views.generic import CreateView, RedirectView
-from django.views.generic.list import MultipleObjectMixin
+from django.views.generic import CreateView, RedirectView, UpdateView
+from django.views.generic.list import ListView
 
+from shortener.forms import URLForm
 from shortener.models import LongShortUrl
 
 
@@ -38,13 +39,22 @@ class CustomRedirectView(RedirectView):
         return reverse('shortener:index')
 
 
-class ProfileView(MultipleObjectMixin, LoginRequiredMixin, CreateView):
-    http_method_names = ('get', 'post')
+class ProfileView(LoginRequiredMixin, ListView):
+    http_method_names = ('get',)
     paginate_by = 5
-    model = LongShortUrl
-    fields = ('long', 'short', 'is_public',)
     template_name = 'profile.html'
 
     def get_context_data(self, **kwargs):
-        author_urls = LongShortUrl.objects.filter(author=self.request.user.id)
-        return super().get_context_data(object_list=author_urls, **kwargs)
+        context = super(ProfileView, self).get_context_data(**kwargs)
+        context['form'] = URLForm()
+        return context
+
+    def get_queryset(self):
+        author = self.request.user
+        return author.urls.all()
+
+
+class UpdateURL(LoginRequiredMixin, UpdateView):
+    form_class = URLForm
+    model = LongShortUrl
+    success_url = reverse_lazy('shortener:profile')
