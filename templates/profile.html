@@ -1,6 +1,11 @@
 {% extends 'base.html' %}
 {% load user_filters %}
 {% block content %}
+  <script type="text/javascript">
+      function myfunction(id) {
+          document.getElementById("my_form_" + id).submit();
+      }
+  </script>
   <div class="row justify-content-center">
     <div class="col-md-6">
       <table class="table table-striped">
@@ -9,13 +14,12 @@
           <th scope="col">#</th>
           <th scope="col">Длинная ссылка</th>
           <th scope="col">Короткая ссылка</th>
-          <th scope="col">is public?</th>
-          <th scope="col"></th>
+          <th scope="col">Публичная ссылка?</th>
         </tr>
         </thead>
         <tbody>
         {% for url in object_list %}
-          <form action="{% url 'shortener:update' url.pk %}" method="post" novalidate>
+          <form id="my_form_{{ url.pk }}" action="{% url 'shortener:update' url.pk %}" method="post" novalidate>
             <tr>
               {% csrf_token %}
               <th scope="row">{{ page_obj.start_index|add:forloop.counter0 }}</th>
@@ -26,10 +30,9 @@
                 <input class="form-check-input" type="checkbox" name="is_public"
                     {% if  url.is_public == True %}
                        checked
-                    {% endif %}>
-              </td>
-              <td>
-                <button type="submit" class="btn btn-primary" value="Update">Сохранить</button>
+                    {% endif %}
+                onchange="myfunction({{ url.pk }})"
+                >
               </td>
             </tr>
           </form>
