@@ -2,7 +2,7 @@
 {% load user_filters %}
 {% block content %}
   <script type="text/javascript">
-      function myfunction(id) {
+      function send_post_data(id) {
           document.getElementById("my_form_" + id).submit();
       }
   </script>
@@ -31,7 +31,7 @@
                     {% if  url.is_public == True %}
                        checked
                     {% endif %}
-                onchange="myfunction({{ url.pk }})"
+                onchange="send_post_data({{ url.pk }})"
                 >
               </td>
             </tr>
