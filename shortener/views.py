@@ -11,6 +11,8 @@ from shortener.models import LongShortUrl
 
 
 class IndexView(SuccessMessageMixin, CreateView):
+    """Вью для главной страницы."""
+
     http_method_names = ('get', 'post')
     template_name = 'index.html'
     model = LongShortUrl
@@ -30,6 +32,8 @@ class IndexView(SuccessMessageMixin, CreateView):
 
 
 class CustomRedirectView(RedirectView):
+    """Вью для страницы редиректа на короткую ссылку."""
+
     http_method_names = ('get',)
 
     def get_redirect_url(self, *args, **kwargs):
@@ -41,31 +45,37 @@ class CustomRedirectView(RedirectView):
 
 
 class ProfileView(LoginRequiredMixin, ListView):
+    """Вью для просмотра своих собственных ссылок"""
+
     http_method_names = ('get',)
     paginate_by = 5
     template_name = 'profile.html'
 
     def get_context_data(self, **kwargs):
+        """Добавляет форму в контекст."""
         context = super(ProfileView, self).get_context_data(**kwargs)
         context['form'] = URLForm()
         return context
 
     def get_queryset(self):
+        """Все ссылки автора."""
         author = self.request.user
         return author.urls.all()
 
 
 class UpdateURL(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    """Вью для редактирования и удаления ссылки."""
+
     form_class = URLForm
     model = LongShortUrl
     success_url = reverse_lazy('shortener:profile')
 
     def post(self, request, *args, **kwargs):
         print(args, kwargs)
-        if 'confirm_delete' in self.request.POST:
-            url = get_object_or_404(LongShortUrl, pk=kwargs.get('pk'))
-            url.delete()
-            messages.warning(request, 'ссылка удалена')
+        if 'confirm_delete' not in self.request.POST:
+            return super(UpdateURL, self).post(request, *args, **kwargs)
 
-            return redirect(self.success_url)
-        return super(UpdateURL, self).post(request, *args, **kwargs)
+        url = get_object_or_404(LongShortUrl, pk=kwargs.get('pk'))
+        url.delete()
+        messages.warning(request, 'ссылка удалена')
+        return redirect(self.success_url)
