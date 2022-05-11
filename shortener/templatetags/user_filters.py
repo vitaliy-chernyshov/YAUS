@@ -10,9 +10,8 @@ def addclass(field, css):
 
 
 @register.filter
-def placeholder(field, placeholder=None):
-    if placeholder is not None:
-        field.field.widget.attrs["placeholder"] = placeholder
-    else:
-        field.field.widget.attrs["placeholder"] = field.field.help_text
+def add_placeholder(field, placeholder=None):
+    field.field.widget.attrs["placeholder"] = (
+        placeholder if placeholder is not None else field.field.help_text
+    )
     return field

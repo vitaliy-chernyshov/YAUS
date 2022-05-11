@@ -53,8 +53,8 @@ class LongShortUrl(models.Model):
         return f'{self.long[:10]} - {self.short}'
 
     def save(self, *args, **kwargs):
+        """Генерируем уникальную последовательность пока не найдем свободную"""
         if not self.short:
-            # Generate ID once, then check the db. If exists, keep trying.
             self.short = gen_random_string()
             while LongShortUrl.objects.filter(short=self.short).exists():
                 self.short = gen_random_string()
